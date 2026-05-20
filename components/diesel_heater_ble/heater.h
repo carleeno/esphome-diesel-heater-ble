@@ -22,6 +22,8 @@
 namespace esphome {
 namespace diesel_heater_ble {
 
+class DieselHeaterClimate;
+
 class DieselHeaterBLE : public Component, public ble_client::BLEClientNode {
  public:
   DieselHeaterBLE() = default;
@@ -47,6 +49,7 @@ class DieselHeaterBLE : public Component, public ble_client::BLEClientNode {
   bool ble_register_for_notify(esp_gatt_if_t gattc_if, esp_bd_addr_t remote_bda);
 
   void on_notification_received(const std::vector<uint8_t> &data);
+  void update_climate(const HeaterState &new_state);
   void update_sensors(const HeaterState &new_state);
   void update_time();
 
@@ -97,6 +100,9 @@ class DieselHeaterBLE : public Component, public ble_client::BLEClientNode {
   // Switch setter
   void set_power_switch(switch_::Switch *sw) { power_switch_ = sw; }
   void on_power_switch(bool state);
+
+  // Climate setter
+  void set_climate(DieselHeaterClimate *climate) { climate_ = climate; }
 
   HeaterState get_state() { return this->state_; }
 
@@ -149,6 +155,8 @@ class DieselHeaterBLE : public Component, public ble_client::BLEClientNode {
   number::Number *set_temp_number_{};
 
   switch_::Switch *power_switch_{};
+
+  DieselHeaterClimate *climate_{};
 };
 
 }  // namespace diesel_heater_ble
